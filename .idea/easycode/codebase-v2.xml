@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/agenda/agenda/__init__.py;/home/gabriel/Pycharm/appagenda/agenda/agenda/asgi.py;/home/gabriel/Pycharm/appagenda/agenda/agenda/settings.py;/home/gabriel/Pycharm/appagenda/agenda/agenda/urls.py;/home/gabriel/Pycharm/appagenda/agenda/agenda/wsgi.py;/home/gabriel/Pycharm/appagenda/agenda/app/migrations/0001_initial.py;/home/gabriel/Pycharm/appagenda/agenda/app/migrations/__init__.py;/home/gabriel/Pycharm/appagenda/agenda/app/static/css/base.css;/home/gabriel/Pycharm/appagenda/agenda/app/templates/login.html;/home/gabriel/Pycharm/appagenda/agenda/app/__init__.py;/home/gabriel/Pycharm/appagenda/agenda/app/admin.py;/home/gabriel/Pycharm/appagenda/agenda/app/apps.py;/home/gabriel/Pycharm/appagenda/agenda/app/forms.py;/home/gabriel/Pycharm/appagenda/agenda/app/models.py;/home/gabriel/Pycharm/appagenda/agenda/app/tests.py;/home/gabriel/Pycharm/appagenda/agenda/app/views.py;/home/gabriel/Pycharm/appagenda/agenda/manage.py" />
+  </component>
+</project>
