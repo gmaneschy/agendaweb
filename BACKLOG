@@ -1,0 +1,38 @@
+1. Cadastro e Autenticação
+[ ] Permitir login para clientes e prestadores de serviço
+[ ] Recuperação de senha
+2. Perfis de Usuário
+[ ] Visualizar e editar perfil do cliente
+[ ] Visualizar e editar perfil do prestador de serviço (incluindo especialidades, portfólio, localização, etc.)
+3. Busca e Listagem
+[ ] Listar prestadores de serviço por categoria/área de atuação
+[ ] Filtros de busca (localização, avaliação, preço, etc.)
+[ ] Visualizar perfil detalhado do prestador
+4. Solicitação de Serviços
+[ ] Cliente pode enviar solicitação de serviço para prestador
+[ ] Prestador recebe notificação de nova solicitação
+[ ] Prestador pode aceitar ou recusar solicitação
+[ ] Cliente recebe notificação da resposta
+5. Comunicação
+[ ] Sistema de chat/mensagens entre cliente e prestador após aceite da solicitação
+6. Avaliação e Feedback
+[ ] Cliente pode avaliar e deixar feedback para o prestador após conclusão do serviço
+[ ] Prestador pode visualizar avaliações recebidas
+7. Histórico
+[ ] Cliente pode visualizar histórico de solicitações e serviços realizados
+[ ] Prestador pode visualizar histórico de serviços prestados
+8. Notificações
+[ ] Notificações por e-mail e/ou push para eventos importantes (novas solicitações, respostas, mensagens, etc.)
+9. Administração (opcional)
+[ ] Painel administrativo para gerenciar usuários, serviços e avaliações
+[ ] Moderação de conteúdo e denúncias
+
+Backlog Prioritário (MVP)
+Login/Logout
+Visualização e edição de perfil
+Listagem e busca de prestadores
+Solicitação de serviço
+Aceite/recusa de solicitação
+Chat básico
+Avaliação de prestador
+Histórico de serviços
