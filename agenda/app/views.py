@@ -1,33 +1,54 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login
-
-
+from django.contrib.auth import login as auth_login, get_user_model
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
 # Create your views here.
-def login(request):
-    login_form = LoginForm()
-    register_form = RegistroForm()
+User = get_user_model()
 
+def login_page(request):
+    """
+    Gerencia a página de login/registro.
+    Lida com requisições POST para login e registro de usuários.
+    Redireciona para a página inicial após o login bem-sucedido.
+    Exibe mensagens de sucesso/erro apropriadas.
+    """
+    active_tab = 'login'  # Aba padrão
     if request.method == 'POST':
-        if 'login_submit' in request.POST:
-            login_form = LoginForm(request, data=request.POST)
+        action = request.POST.get('action')
+
+        if action == 'login':
+            login_form = CustomAuthenticationForm(request, data=request.POST)
+            register_form = CustomUserCreationForm()  # Formulário vazio
+
             if login_form.is_valid():
                 user = login_form.get_user()
                 auth_login(request, user)
-                return redirect('home')  # Redirecione para sua home ou dashboard
+                return redirect('homepage')
+            active_tab = 'login'
 
-        elif 'register_submit' in request.POST:
-            register_form = RegistroForm(request.POST)
+        elif action == 'registro':
+            login_form = CustomAuthenticationForm()  # Formulário vazio
+            register_form = CustomUserCreationForm(request.POST)
+
             if register_form.is_valid():
-                user = register_form.save()
-                auth_login(request, user)
-                return redirect('home')
+                register_form.save()
+                messages.success(request, 'Conta criada com sucesso.')
+                return redirect('login')
+            else:
+                active_tab = 'registro'  # Fica na aba de registro se houver erros
+
+    else:  # GET
+        login_form = CustomAuthenticationForm()
+        register_form = CustomUserCreationForm()
 
     return render(request, 'login.html', {
         'login': login_form,
-        'registro': register_form,
+        'form': register_form,
+        'active_tab': active_tab,
     })
+
 
 @login_required
 def home(request):
