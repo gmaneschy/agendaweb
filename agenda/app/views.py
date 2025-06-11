@@ -1,6 +1,9 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
-from .forms import RegistroForm, LoginForm
+
+
+
 # Create your views here.
 def login(request):
     login_form = LoginForm()
@@ -25,3 +28,7 @@ def login(request):
         'login': login_form,
         'registro': register_form,
     })
+
+@login_required
+def home(request):
+    return render(request, 'home.html')
