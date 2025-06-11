@@ -7,14 +7,9 @@ from .forms import CustomUserCreationForm, CustomAuthenticationForm
 # Create your views here.
 User = get_user_model()
 
-def login_page(request):
-    """
-    Gerencia a página de login/registro.
-    Lida com requisições POST para login e registro de usuários.
-    Redireciona para a página inicial após o login bem-sucedido.
-    Exibe mensagens de sucesso/erro apropriadas.
-    """
+def login(request):
     active_tab = 'login'  # Aba padrão
+
     if request.method == 'POST':
         action = request.POST.get('action')
 
@@ -25,7 +20,7 @@ def login_page(request):
             if login_form.is_valid():
                 user = login_form.get_user()
                 auth_login(request, user)
-                return redirect('homepage')
+                return redirect('home')
             active_tab = 'login'
 
         elif action == 'registro':

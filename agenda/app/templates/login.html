@@ -1,27 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+<style>
+.hidden { display: none; }
+.tab-button.active { font-weight: bold; }
+</style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
 </head>
 <body>
+<div class="login-container">
+    <div class="tabs">
+        <button class="tab-button active" data-tab="login">Login</button>
+        <button class="tab-button" data-tab="registro">Criar Conta</button>
+    </div>
 
-<h2>Login</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ login.as_p }}
-    <button type="submit" name="login_submit">Entrar</button>
-</form>
+    <div class="tab-content" id="login">
+        <form method="post" id="login-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="login">
+            {{ login.as_p }}
+            <p>
+            <a href="{% url 'password_reset' %}">Esqueceu sua senha?</a>
+            </p>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
 
-<hr>
+    <div class="tab-content hidden" id="registro">
+        <form method="post" id="registro-form">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="registro">
+            {{ form.as_p }}
+            <button type="submit">Criar Conta</button>
+        </form>
+    </div>
 
-<h2>Registrar</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ registro.as_p }}
-    <button type="submit" name="register_submit">Cadastrar</button>
-</form>
 
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const activeTab = "{{ active_tab|default:'login' }}";  // Valor vindo da view
+
+    // Ativa a aba correta
+    document.querySelectorAll('.tab-button').forEach(button => {
+        const tab = button.getAttribute('data-tab');
+        if (tab === activeTab) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+
+    // Mostra o conteúdo correto
+    document.querySelectorAll('.tab-content').forEach(content => {
+        if (content.id === activeTab) {
+            content.classList.remove('hidden');
+        } else {
+            content.classList.add('hidden');
+        }
+    });
+
+    // Ainda permite trocar manualmente de aba
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const tab = button.getAttribute('data-tab');
+
+            // Ativa/desativa botões
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'))
+            button.classList.add('active')
+
+            // Mostra/esconde conteúdo
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden')
+            })
+            document.getElementById(tab).classList.remove('hidden')
+        })
+    });
+});
+</script>
 
 </body>
 </html>
