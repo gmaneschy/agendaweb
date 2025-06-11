@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dados da Empresa</title>
+</head>
+<body>
+<h1>Preencha com os dados da sua Empresa</h1>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ service_form.as_p }}
+
+  <h3>Serviços:</h3>
+  <div id="especialidades">
+    {{ formset.management_form }}
+    {% for form in formset %}
+      <div class="especialidade-form">
+        {{ form.as_p }}
+      </div>
+    {% endfor %}
+  </div>
+
+  <button type="button" id="add-especialidade">+ Adicionar Especialidade</button>
+  <br><br>
+  <button type="submit">Salvar</button>
+</form>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const addBtn = document.getElementById('add-especialidade');
+    const especialidadesDiv = document.getElementById('especialidades');
+    const totalForms = document.getElementById('id_especialidade_set-TOTAL_FORMS');
+
+    addBtn.addEventListener('click', function () {
+      const currentFormCount = parseInt(totalForms.value);
+      const formCopyTarget = especialidadesDiv.querySelector('.especialidade-form');
+      const newForm = formCopyTarget.cloneNode(true);
+
+      // Atualiza os campos do novo form
+      newForm.querySelectorAll('input').forEach(function (input) {
+        const name = input.name.replace(`-${currentFormCount - 1}-`, `-${currentFormCount}-`);
+        const id = input.id.replace(`-${currentFormCount - 1}-`, `-${currentFormCount}-`);
+        input.name = name;
+        input.id = id;
+        input.value = '';
+      });
+
+      // Adiciona o novo form no DOM
+      especialidadesDiv.appendChild(newForm);
+
+      // Atualiza o total de forms
+      totalForms.value = currentFormCount + 1;
+    });
+  });
+</script>
+
+</body>
+</html>

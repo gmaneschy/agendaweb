@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login as auth_login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, ServiceConfigForm, EspecialidadesFormSet
 
 # Create your views here.
 User = get_user_model()
@@ -20,7 +20,10 @@ def login(request):
             if login_form.is_valid():
                 user = login_form.get_user()
                 auth_login(request, user)
-                return redirect('home')
+                if user.is_provider:
+                    return redirect('serviceconfig')
+                else:
+                    return redirect('home')
             active_tab = 'login'
 
         elif action == 'registro':
@@ -48,3 +51,29 @@ def login(request):
 @login_required
 def home(request):
     return render(request, 'home.html')
+
+@login_required
+def serviceconfig(request):
+    if request.method == 'POST':
+        service_form = ServiceConfigForm(request.POST, request.FILES)
+        formset = EspecialidadesFormSet(request.POST)
+
+        if service_form.is_valid() and formset.is_valid():
+            service = service_form.save(commit=False)
+            service.usuario = request.user
+            service.save()
+
+            formset.instance = service
+            formset.save()
+
+            messages.success(request, 'Serviço e especialidades salvos com sucesso!')
+            return redirect('home')  # ou outra tela de confirmação
+
+    else:
+        service_form = ServiceConfigForm()
+        formset = EspecialidadesFormSet()
+
+    return render(request, 'serviceconfig.html', {
+        'service_form': service_form,
+        'formset': formset,
+    })
