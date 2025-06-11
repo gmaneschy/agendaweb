@@ -1,6 +1,6 @@
 1. Cadastro e Autenticação
-[ ] Permitir login para clientes e prestadores de serviço
-[ ] Recuperação de senha
+[x] Permitir login para clientes e prestadores de serviço
+[x] Recuperação de senha
 2. Perfis de Usuário
 [ ] Visualizar e editar perfil do cliente
 [ ] Visualizar e editar perfil do prestador de serviço (incluindo especialidades, portfólio, localização, etc.)
