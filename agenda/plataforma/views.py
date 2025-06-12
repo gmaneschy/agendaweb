@@ -55,7 +55,6 @@ def home(request):
 
 
 @login_required
-@login_required
 def serviceconfig(request):
     # Obtém ou cria o serviço do usuário
     service, created = Service.objects.get_or_create(usuario=request.user)
