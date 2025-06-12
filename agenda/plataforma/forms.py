@@ -71,12 +71,23 @@ class ServiceConfigForm(forms.ModelForm):
         model = Service
         fields = ['empresa', 'descricao', 'localizacao']
 
+
 class EspecialidadesForm(forms.ModelForm):
+    nome = forms.CharField(label='Nome do Serviço', max_length=100)
+    preco = forms.DecimalField(label='Preço', max_digits=7, decimal_places=2)
+
     class Meta:
         model = Especialidades
         fields = ['nome', 'preco']
 
-EspecialidadesFormSet = inlineformset_factory(
-    Service, Especialidades, form=EspecialidadesForm,
-    fields=['nome', 'preco'], extra=1, can_delete=True
-)
+    def __init__(self, *args, **kwargs):
+        self.service = kwargs.pop('service', None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        especialidade = super().save(commit=False)
+        if self.service:
+            especialidade.servicos = self.service
+        if commit:
+            especialidade.save()
+        return especialidade

@@ -1,8 +1,9 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .forms import CustomUserCreationForm, CustomAuthenticationForm, ServiceConfigForm, EspecialidadesFormSet
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, ServiceConfigForm, EspecialidadesForm
+from .models import Service, Especialidades
 
 # Create your views here.
 User = get_user_model()
@@ -52,28 +53,46 @@ def login(request):
 def home(request):
     return render(request, 'home.html')
 
+
+@login_required
 @login_required
 def serviceconfig(request):
-    if request.method == 'POST':
-        service_form = ServiceConfigForm(request.POST, request.FILES)
-        formset = EspecialidadesFormSet(request.POST)
+    # Obtém ou cria o serviço do usuário
+    service, created = Service.objects.get_or_create(usuario=request.user)
 
-        if service_form.is_valid() and formset.is_valid():
+    # Inicializa os formulários
+    service_form = ServiceConfigForm(request.POST or None, request.FILES or None, instance=service)
+    especialidade_form = EspecialidadesForm(request.POST or None, service=service)
+    especialidades = Especialidades.objects.filter(servicos=service)
+
+    if request.method == 'POST':
+        # Verifica qual formulário foi submetido
+        if 'add_especialidade' in request.POST:
+            if especialidade_form.is_valid():
+                especialidade_form.save()
+                messages.success(request, 'Serviço adicionado com sucesso!')
+                return redirect('serviceconfig')
+
+        elif service_form.is_valid():
             service = service_form.save(commit=False)
             service.usuario = request.user
             service.save()
-
-            formset.instance = service
-            formset.save()
-
-            messages.success(request, 'Serviço e especialidades salvos com sucesso!')
-            return redirect('home')  # ou outra tela de confirmação
-
-    else:
-        service_form = ServiceConfigForm()
-        formset = EspecialidadesFormSet()
+            messages.success(request, 'Dados da empresa salvos com sucesso!')
+            return redirect('home')
 
     return render(request, 'serviceconfig.html', {
         'service_form': service_form,
-        'formset': formset,
+        'especialidade_form': especialidade_form,
+        'especialidades': especialidades,
     })
+
+@login_required
+def remover_especialidade(request, especialidade_id):
+    especialidade = get_object_or_404(Especialidades, id=especialidade_id)
+    # Verifica se a especialidade pertence ao usuário
+    if especialidade.servicos.usuario == request.user:
+        especialidade.delete()
+        messages.success(request, 'Serviço removido com sucesso!')
+    else:
+        messages.error(request, 'Você não tem permissão para remover este serviço.')
+    return redirect('serviceconfig')

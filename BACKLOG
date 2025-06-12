@@ -4,6 +4,7 @@
 2. Perfis de Usuário
 [ ] Visualizar e editar perfil do cliente
 [ ] Visualizar e editar perfil do prestador de serviço (incluindo especialidades, portfólio, localização, etc.)
+[ ] Aprimorar formulário de cadastro de prestador de serviço com api dos correios para preenchimento automático com CEP e validador de CNPJ
 3. Busca e Listagem
 [ ] Listar prestadores de serviço por categoria/área de atuação
 [ ] Filtros de busca (localização, avaliação, preço, etc.)

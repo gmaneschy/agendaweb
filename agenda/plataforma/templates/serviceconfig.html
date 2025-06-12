@@ -11,47 +11,29 @@
   {{ service_form.as_p }}
 
   <h3>Serviços:</h3>
-  <div id="especialidades">
-    {{ formset.management_form }}
-    {% for form in formset %}
-      <div class="especialidade-form">
-        {{ form.as_p }}
+
+  <!-- Lista de serviços já cadastrados -->
+  <div id="lista-especialidades">
+    {% for especialidade in especialidades %}
+      <div class="especialidade-item">
+        <p>
+          <strong>{{ especialidade.nome }}</strong> - R$ {{ especialidade.preco }}
+          <a href="{% url 'remover_especialidade' especialidade.id %}" class="remover-especialidade">[Remover]</a>
+        </p>
       </div>
+    {% empty %}
+      <p>Nenhum serviço cadastrado ainda.</p>
     {% endfor %}
   </div>
 
-  <button type="button" id="add-especialidade">+ Adicionar Especialidade</button>
+  <!-- Formulário para adicionar novo serviço -->
+  <h4>Adicionar novo serviço:</h4>
+  {{ especialidade_form.as_p }}
+  <button type="submit" name="add_especialidade">Adicionar Serviço</button>
+
   <br><br>
-  <button type="submit">Salvar</button>
+  <button type="submit">Salvar Empresa</button>
 </form>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const addBtn = document.getElementById('add-especialidade');
-    const especialidadesDiv = document.getElementById('especialidades');
-    const totalForms = document.getElementById('id_especialidade_set-TOTAL_FORMS');
-
-    addBtn.addEventListener('click', function () {
-      const currentFormCount = parseInt(totalForms.value);
-      const formCopyTarget = especialidadesDiv.querySelector('.especialidade-form');
-      const newForm = formCopyTarget.cloneNode(true);
-
-      // Atualiza os campos do novo form
-      newForm.querySelectorAll('input').forEach(function (input) {
-        const name = input.name.replace(`-${currentFormCount - 1}-`, `-${currentFormCount}-`);
-        const id = input.id.replace(`-${currentFormCount - 1}-`, `-${currentFormCount}-`);
-        input.name = name;
-        input.id = id;
-        input.value = '';
-      });
-
-      // Adiciona o novo form no DOM
-      especialidadesDiv.appendChild(newForm);
-
-      // Atualiza o total de forms
-      totalForms.value = currentFormCount + 1;
-    });
-  });
-</script>
 
 </body>
 </html>
