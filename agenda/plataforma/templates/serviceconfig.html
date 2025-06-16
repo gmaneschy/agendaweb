@@ -3,17 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <title>Dados da Empresa</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/serviceconfig.css' %}">
+
 </head>
 <body>
-<h1>Preencha com os dados da sua Empresa</h1>
-<form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {{ service_form.as_p }}
+<div class="form-container">
+    <!-- Container para mensagens -->
 
-  <h3>Serviços:</h3>
+    <!-- Formulário da Empresa (primeiro passo) -->
+    <div id="empresa-form" class="form-step active">
+        <h1>Preencha com os dados da sua Empresa</h1>
+        <form method="POST" enctype="multipart/form-data" id="service-form">
+            {% csrf_token %}
+            {{ service_form.as_p }}
+            <button type="button" id="continuar-btn" class="btn-continuar">Continuar</button>
+        </form>
+    </div>
 
-  <!-- Lista de serviços já cadastrados -->
-  <div id="lista-especialidades">
+    <!-- Formulário de Especialidades (segundo passo) -->
+    <div id="especialidades-form" class="form-step">
+        <h1>Adicione seus Serviços</h1>
+        <form method="POST" enctype="multipart/form-data" id="especialidades-form-main">
+            {% csrf_token %}
+            <h3>Serviços:</h3>
+
+<div id="lista-especialidades">
     {% for especialidade in especialidades %}
       <div class="especialidade-item">
         <p>
@@ -26,14 +41,212 @@
     {% endfor %}
   </div>
 
-  <!-- Formulário para adicionar novo serviço -->
-  <h4>Adicionar novo serviço:</h4>
-  {{ especialidade_form.as_p }}
-  <button type="submit" name="add_especialidade">Adicionar Serviço</button>
+            <h4>Adicionar novo serviço:</h4>
+            <div id="especialidade-form-container">
+                {{ especialidade_form.as_p }}
+                <button type="button" id="add-especialidade-btn">Adicionar Serviço</button>
+            </div>
 
-  <br><br>
-  <button type="submit">Salvar Empresa</button>
-</form>
+            <div class="form-navigation">
+                <button type="button" class="btn-voltar">Voltar</button>
+                <button type="submit" class="btn-finalizar" name="finalizar">Finalizar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const continuarBtn = document.getElementById('continuar-btn');
+        const voltarBtn = document.querySelector('.btn-voltar');
+        const empresaForm = document.getElementById('empresa-form');
+        const especialidadesForm = document.getElementById('especialidades-form');
+        const addEspecialidadeBtn = document.getElementById('add-especialidade-btn');
+        const finalizarBtn = document.querySelector('.btn-finalizar');
+
+        // Mostrar apenas o primeiro formulário inicialmente
+        empresaForm.classList.add('active');
+
+        // Função para mostrar mensagens
+        function showMessage(text, type) {
+            const container = document.getElementById('message-container');
+            container.innerHTML = `<div class="alert alert-${type}">${text}</div>`;
+            setTimeout(() => container.innerHTML = '', 3000);
+        }
+
+        // Continuar para o formulário de especialidades
+    continuarBtn.addEventListener('click', function() {
+        // Validação básica do formulário antes de continuar
+        const form = document.getElementById('service-form');
+        let isValid = true;
+
+        // Verifica se todos os campos obrigatórios estão preenchidos
+        form.querySelectorAll('input[required]').forEach(input => {
+            if (!input.value.trim()) {
+                isValid = false;
+                input.style.borderColor = 'red';
+            } else {
+                input.style.borderColor = '';
+            }
+        });
+
+        // Voltar para o formulário da empresa
+        voltarBtn?.addEventListener('click', function() {
+            especialidadesForm.classList.remove('active');
+            setTimeout(() => {
+                especialidadesForm.style.display = 'none';
+                empresaForm.style.display = 'block';
+                setTimeout(() => {
+                    empresaForm.classList.add('active');
+                }, 50);
+            }, 500);
+        });
+
+        // Adicionar especialidade via AJAX
+        if (addEspecialidadeBtn) {
+            addEspecialidadeBtn.addEventListener('click', function() {
+                const nome = document.querySelector('#id_nome').value;
+                const preco = document.querySelector('#id_preco').value;
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                if (!nome || !preco) {
+                    showMessage('Por favor, preencha todos os campos do serviço', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('nome', nome);
+                formData.append('preco', preco);
+                formData.append('add_especialidade', 'true');
+
+                fetch('', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Atualiza a lista de especialidades
+                        const lista = document.getElementById('lista-especialidades');
+                        if (lista.querySelector('p:not(.especialidade-item)')) {
+                            lista.innerHTML = ''; // Remove a mensagem "Nenhum serviço"
+                        }
+
+                        // Adiciona o novo item
+                        lista.insertAdjacentHTML('beforeend', `
+                            <div class="especialidade-item" data-id="${data.id}">
+                                <p>
+                                    <strong>${data.nome}</strong> - R$ ${data.preco}
+                                    <a href="#" class="remover-especialidade" data-id="${data.id}">[Remover]</a>
+                                </p>
+                            </div>
+                        `);
+
+                        // Limpa o formulário
+                        document.querySelector('#id_nome').value = '';
+                        document.querySelector('#id_preco').value = '';
+
+                        // Mostra mensagem de sucesso
+                        showMessage('Serviço adicionado com sucesso!', 'success');
+                    } else {
+                        showMessage('Erro ao adicionar serviço: ' + (data.error || ''), 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('Erro na comunicação com o servidor', 'error');
+                    console.error('Error:', error);
+                });
+            });
+        }
+
+
+    if (isValid) {
+        // Submete o formulário da empresa via AJAX
+        const formData = new FormData(form);
+        formData.append('save_service', 'true'); // Adiciona este parâmetro
+
+        fetch('', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Transição suave entre formulários
+                empresaForm.classList.remove('active');
+                setTimeout(() => {
+                    empresaForm.style.display = 'none';
+                    especialidadesForm.style.display = 'block';
+                    setTimeout(() => {
+                        especialidadesForm.classList.add('active');
+                    }, 50);
+                }, 500);
+            } else {
+                showMessage('Erro ao salvar dados da empresa: ' + (data.error || ''), 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showMessage('Erro na comunicação com o servidor', 'error');
+        });
+    } else {
+        showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+    }
+});
+
+        // Remover especialidade via AJAX
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remover-especialidade')) {
+                e.preventDefault();
+                const id = e.target.getAttribute('data-id');
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch(`/remover_especialidade/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`.especialidade-item[data-id="${id}"]`).remove();
+                        showMessage('Serviço removido com sucesso!', 'success');
+
+                        // Se não houver mais itens, mostra mensagem
+                        const lista = document.getElementById('lista-especialidades');
+                        if (lista.children.length === 0) {
+                            lista.innerHTML = '<p>Nenhum serviço cadastrado ainda.</p>';
+                        }
+                    } else {
+                        showMessage('Erro ao remover serviço: ' + (data.error || ''), 'error');
+                    }
+                })
+                .catch(error => {
+                    showMessage('Erro na comunicação com o servidor', 'error');
+                    console.error('Error:', error);
+                });
+            }
+        });
+
+        // Finalizar (submeter o formulário principal)
+        if (finalizarBtn) {
+            finalizarBtn.addEventListener('click', function(e) {
+                // Você pode adicionar validação adicional aqui se necessário
+                document.getElementById('especialidades-form-main').submit();
+            });
+        }
+    });
+</script>
 
 </body>
 </html>

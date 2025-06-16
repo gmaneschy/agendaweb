@@ -1,0 +1,30 @@
+.form-container {
+position: relative;
+min-height: 500px;
+}
+
+.form-step {
+display: none;
+opacity: 0;
+transition: opacity 0.5s ease;
+position: absolute;
+width: 100%;
+}
+
+.form-step.active {
+display: block;
+opacity: 1;
+position: relative;
+}
+
+.btn-continuar, .btn-voltar, .btn-finalizar {
+padding: 10px 20px;
+margin-top: 20px;
+cursor: pointer;
+}
+
+.form-navigation {
+display: flex;
+justify-content: space-between;
+margin-top: 20px;
+}

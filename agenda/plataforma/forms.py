@@ -3,7 +3,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
 from django import forms
 from .models import Service, Especialidades
-from django.forms import inlineformset_factory
 
 User = get_user_model()
 
