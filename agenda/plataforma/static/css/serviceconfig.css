@@ -28,3 +28,10 @@ display: flex;
 justify-content: space-between;
 margin-top: 20px;
 }
+
+.form-step {
+    display: none;
+}
+.form-step.active {
+    display: block;
+}
