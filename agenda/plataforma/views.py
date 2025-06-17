@@ -118,7 +118,6 @@ def serviceconfig(request):
 def remover_especialidade(request, especialidade_id):
     especialidade = get_object_or_404(Especialidades, id=especialidade_id)
 
-    # Verifica se a especialidade pertence ao usuário
     if especialidade.servicos.usuario == request.user:
         especialidade.delete()
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':

@@ -69,27 +69,44 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // 3. Remover especialidade via AJAX
-    listaEspecialidades.addEventListener("click", function (e) {
-        if (e.target.classList.contains("remover-especialidade")) {
-            e.preventDefault();
-            const id = e.target.dataset.id;
-            fetch(`/remover-especialidade/${id}/`, {
-                method: "GET",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest",
+    // 3. Remover especialidade via AJAX - updated version
+    document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("remover-especialidade")) {
+        e.preventDefault();
+        const id = e.target.dataset.id;
+
+        fetch(`/remover_especialidade/${id}/`, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCSRFToken()
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                const item = e.target.closest(".especialidade-item");
+                item.remove();
+
+                // Show "no services" message if list is empty
+                if (listaEspecialidades.querySelectorAll('.especialidade-item').length === 0) {
+                    listaEspecialidades.innerHTML = '<p>Nenhum serviço cadastrado ainda.</p>';
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    e.target.closest(".especialidade-item").remove();
-                } else {
-                    alert("Erro ao remover especialidade.");
-                }
-            });
-        }
-    });
+            } else {
+                alert("Erro ao remover especialidade: " + (data.error || ''));
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Erro na comunicação com o servidor. Detalhes no console.");
+        });
+    }
+});
 
     // 4. Voltar ao formulário da empresa
     voltarBtn.addEventListener("click", function () {

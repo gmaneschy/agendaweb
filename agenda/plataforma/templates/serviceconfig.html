@@ -28,17 +28,16 @@
 
             <div id="lista-especialidades">
                 {% for especialidade in especialidades %}
-                  <div class="especialidade-item">
+                <div class="especialidade-item" data-id="{{ especialidade.id }}">
                     <p>
-                      <strong>{{ especialidade.nome }}</strong> - R$ {{ especialidade.preco }}
-                      <a href="{% url 'remover_especialidade' especialidade.id %}" class="remover-especialidade">[Remover]</a>
+                        <strong>{{ especialidade.nome }}</strong> - R$ {{ especialidade.preco }}
+                        <a href="#" class="remover-especialidade" data-id="{{ especialidade.id }}">[Remover]</a>
                     </p>
-                  </div>
+                </div>
                 {% empty %}
-                  <p>Nenhum serviço cadastrado ainda.</p>
+                <p>Nenhum serviço cadastrado ainda.</p>
                 {% endfor %}
-              </div>
-
+            </div>
             <h4>Adicionar novo serviço:</h4>
             <div id="especialidade-form-container">
                 {{ especialidade_form.as_p }}
