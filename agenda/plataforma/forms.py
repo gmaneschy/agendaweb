@@ -1,3 +1,4 @@
+import requests
 from django.core.exceptions import ValidationError
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import get_user_model
@@ -68,7 +69,20 @@ class CustomAuthenticationForm(AuthenticationForm):
 class ServiceConfigForm(forms.ModelForm):
     class Meta:
         model = Service
-        fields = ['empresa', 'descricao', 'localizacao']
+        fields = ['empresa', 'descricao', 'cep', 'rua', 'numero', 'complemento', 'bairro', 'cidade', 'estado', 'portifolio']
+
+    def clean_cep(self):
+        cep = self.cleaned_data['cep'].replace("-", "").strip()
+
+        if len(cep) != 8 or not cep.isdigit():
+            raise forms.ValidationError("O CEP deve conter 8 dígitos numéricos.")
+
+        # Validação via BrasilAPI
+        response = requests.get(f"https://brasilapi.com.br/api/cep/v1/{cep}")
+        if response.status_code != 200:
+            raise forms.ValidationError("CEP inválido ou não encontrado.")
+
+        return self.cleaned_data['cep']
 
 
 class EspecialidadesForm(forms.ModelForm):
