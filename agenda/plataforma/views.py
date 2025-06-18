@@ -52,7 +52,9 @@ def login(request):
 
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    especialidades = Especialidades.objects.select_related('servicos').all()
+    return render(request, 'home.html', {'especialidades': especialidades})
+
 
 
 @login_required

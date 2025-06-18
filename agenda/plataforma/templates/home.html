@@ -3,8 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    {% load static %}
+    <script src="{% static 'js/pesquisa.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/pesquisa.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-<h1>Bem vindo</h1>
+<form id="search-form" onsubmit="event.preventDefault(); realizarPesquisa();">
+    <input type="text" id="search-input" placeholder="Buscar serviços por nome">
+    <button type="button" id="search-btn" onclick="realizarPesquisa()">Buscar</button>
+    <button type="button" id="clear-filters">Limpar</button>
+</form>
+
+<table id="tabela-servicos">
+    <thead>
+        <tr>
+            <th>Serviço</th>
+            <th>Empresa</th>
+            <th>Cidade</th>
+            <!-- você pode adicionar mais colunas aqui -->
+        </tr>
+    </thead>
+    <tbody>
+        {% for especialidade in especialidades %}
+        <tr>
+            <td>{{ especialidade.nome }}</td>
+            <td>{{ especialidade.servicos.empresa }}</td>
+            <td>{{ especialidade.servicos.cidade }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 </body>
 </html>
