@@ -16,6 +16,8 @@
         <form method="POST" enctype="multipart/form-data" id="service-form">
             {% csrf_token %}
             {{ service_form.as_p }}
+            <span id="erro-cep-digitos" style="color: red; display: none;">CEP deve conter 8 dígitos.</span>
+            <span id="erro-cep-invalido" style="color: red; display: none;">CEP inválido ou não encontrado.</span>
             <button type="button" id="continuar-btn" class="btn-continuar">Continuar</button>
         </form>
     </div>
@@ -44,12 +46,11 @@
                 {{ especialidade_form.as_p }}
                 <button type="button" id="add-especialidade-btn">Adicionar Serviço</button>
             </div>
-
+        </form>
             <div class="form-navigation">
                 <button type="button" class="btn-voltar">Voltar</button>
-                <button type="submit" class="btn-finalizar" name="finalizar">Finalizar</button>
+                <button type="submit" class="btn-finalizar" name="finalizar" form="service-form">Finalizar</button>
             </div>
-        </form>
     </div>
 </div>
 </body>
