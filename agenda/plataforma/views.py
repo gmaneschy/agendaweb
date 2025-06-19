@@ -56,7 +56,6 @@ def home(request):
     return render(request, 'home.html', {'especialidades': especialidades})
 
 
-
 @login_required
 def serviceconfig(request):
     service, created = Service.objects.get_or_create(usuario=request.user)
@@ -133,3 +132,7 @@ def remover_especialidade(request, especialidade_id):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': True})
     return redirect('serviceconfig')
+
+@login_required
+def usuario(request):
+    pass
